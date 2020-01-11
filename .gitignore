@@ -3,3 +3,7 @@
 ################################################################################
 
 /.vs/Alura.Loja/v16
+/.vs/Alura.Loja/v15
+/Alura.Loja.Testes.ConsoleApp/bin/Debug
+/Alura.Loja.Testes.ConsoleApp/obj/Debug
+/packages
