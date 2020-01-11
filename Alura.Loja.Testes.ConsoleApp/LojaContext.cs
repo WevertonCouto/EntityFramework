@@ -6,6 +6,25 @@ namespace Alura.Loja.Testes.ConsoleApp
     public class LojaContext : DbContext
     {
         public DbSet<Produto> Produtos { get; set; }
+        public DbSet<Compra> Compras { get; set; }
+        public DbSet<Promocao> Promocoes { get; set; }
+        public DbSet<Cliente> Clientes { get; set; }
+        public DbSet<Endereco> Enderecos { get; set; }
+
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder
+                .Entity<PromocaoProduto>()
+                .HasKey(p => new { p.IdProduto, p.IdPromocao});
+            modelBuilder
+                .Entity<Endereco>()
+                .Property<int>("ClienteId");
+            modelBuilder
+                .Entity<Endereco>()
+                .HasKey("ClienteId");
+            base.OnModelCreating(modelBuilder);
+        }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

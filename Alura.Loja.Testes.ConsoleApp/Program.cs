@@ -10,61 +10,39 @@ namespace Alura.Loja.Testes.ConsoleApp
     {
         static void Main(string[] args)
         {
-            //GravarUsandoEntity();
-            //RecuperarUsandoEntity();
-            //DeletarUsandoEntity(1);
-            //DeletarTodosUsandoEntity();
-            AtualizarUsandoEntity(new Produto());
+            Cliente cliente = new Cliente();
+            cliente.Nome = "Fulano";
+            cliente.Endereco = new Endereco
+            {
+                Numero = 12,
+                Logradouro = "Rua..."
+            };
         }
 
-        private static void AtualizarUsandoEntity(Produto produto)
+        private static void MuitosParaMuitos()
         {
-            using (var context = new ProdutoDAO())
-            {
-                context.Atualizar(produto);
-            }
-        }
+            var p1 = new Produto();
+            var p2 = new Produto();
+            var p3 = new Produto();
 
-        private static void DeletarTodosUsandoEntity()
-        {
-            List<Produto> list = RecuperarUsandoEntity();
-            using (var context = new ProdutoDAO())
-            {
-                foreach (var item in list)
-                {
-                    context.Remover(item);
-                }
-            }
-        }
 
-        private static void DeletarUsandoEntity(Produto p)
-        {
-            using (var context = new ProdutoDAO())
-            {
-                context.Remover(p);
-            }
-        }
+            var promocaoDePascoa = new Promocao();
+            promocaoDePascoa.Descricao = "Páscoa Feliz";
+            promocaoDePascoa.DataInicio = DateTime.Now;
+            promocaoDePascoa.DataFim = DateTime.Now.AddMonths(3);
 
-        private static List<Produto> RecuperarUsandoEntity()
-        {
-            var list = new List<Produto>();
-            using (var context = new ProdutoDAO())
-            {
-                list = context.Produtos();
-            }
-            return list;
-        }
+            promocaoDePascoa.IncluiProduto(p1);
+            promocaoDePascoa.IncluiProduto(p2);
+            promocaoDePascoa.IncluiProduto(p3);
+            //promocaoDePascoa.Produtos.Add(new Produto());
+            //promocaoDePascoa.Produtos.Add(new Produto());
 
-        private static void GravarUsandoEntity()
-        {
-            Produto p = new Produto();
-            p.Nome = "Harry Potter e a Ordem da Fênix";
-            p.Categoria = "Livros";
-            p.Preco = 19.89;
 
-            using (var context = new ProdutoDAO())
+            using (var context = new LojaContext())
             {
-                context.Adicionar(p);
+                context.Promocoes.Add(promocaoDePascoa);
+                context.SaveChanges();
+
             }
         }
     }
