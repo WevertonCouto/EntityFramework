@@ -10,8 +10,49 @@ namespace Alura.Loja.Testes.ConsoleApp
     {
         static void Main(string[] args)
         {
-            GravarUsandoEntity();
-            //GravarUsandoAdoNet();
+            //GravarUsandoEntity();
+            //RecuperarUsandoEntity();
+            //DeletarUsandoEntity(1);
+            //DeletarTodosUsandoEntity();
+            AtualizarUsandoEntity(new Produto());
+        }
+
+        private static void AtualizarUsandoEntity(Produto produto)
+        {
+            using (var context = new ProdutoDAO())
+            {
+                context.Atualizar(produto);
+            }
+        }
+
+        private static void DeletarTodosUsandoEntity()
+        {
+            List<Produto> list = RecuperarUsandoEntity();
+            using (var context = new ProdutoDAO())
+            {
+                foreach (var item in list)
+                {
+                    context.Remover(item);
+                }
+            }
+        }
+
+        private static void DeletarUsandoEntity(Produto p)
+        {
+            using (var context = new ProdutoDAO())
+            {
+                context.Remover(p);
+            }
+        }
+
+        private static List<Produto> RecuperarUsandoEntity()
+        {
+            var list = new List<Produto>();
+            using (var context = new ProdutoDAO())
+            {
+                list = context.Produtos();
+            }
+            return list;
         }
 
         private static void GravarUsandoEntity()
@@ -21,23 +62,9 @@ namespace Alura.Loja.Testes.ConsoleApp
             p.Categoria = "Livros";
             p.Preco = 19.89;
 
-            using (var context = new LojaContext())
+            using (var context = new ProdutoDAO())
             {
-                context.Add(p);
-                context.SaveChanges();
-            }
-        }
-
-        private static void GravarUsandoAdoNet()
-        {
-            Produto p = new Produto();
-            p.Nome = "Harry Potter e a Ordem da Fênix";
-            p.Categoria = "Livros";
-            p.Preco = 19.89;
-
-            using (var repo = new ProdutoDAO())
-            {
-                repo.Adicionar(p);
+                context.Adicionar(p);
             }
         }
     }
