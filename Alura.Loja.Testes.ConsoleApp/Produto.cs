@@ -10,5 +10,6 @@ namespace Alura.Loja.Testes.ConsoleApp
         public double PrecoUnitario { get; set; }
         public string Unidade { get; set; }
         public List<PromocaoProduto> Promocoes { get; set; }
+        public List<Compra> Compras { get; set; }
     }
 }

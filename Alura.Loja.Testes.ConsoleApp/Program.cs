@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,39 +11,73 @@ namespace Alura.Loja.Testes.ConsoleApp
     {
         static void Main(string[] args)
         {
-            Cliente cliente = new Cliente();
-            cliente.Nome = "Fulano";
-            cliente.Endereco = new Endereco
-            {
-                Numero = 12,
-                Logradouro = "Rua..."
-            };
-        }
-
-        private static void MuitosParaMuitos()
-        {
-            var p1 = new Produto();
-            var p2 = new Produto();
-            var p3 = new Produto();
-
-
-            var promocaoDePascoa = new Promocao();
-            promocaoDePascoa.Descricao = "Páscoa Feliz";
-            promocaoDePascoa.DataInicio = DateTime.Now;
-            promocaoDePascoa.DataFim = DateTime.Now.AddMonths(3);
-
-            promocaoDePascoa.IncluiProduto(p1);
-            promocaoDePascoa.IncluiProduto(p2);
-            promocaoDePascoa.IncluiProduto(p3);
-            //promocaoDePascoa.Produtos.Add(new Produto());
-            //promocaoDePascoa.Produtos.Add(new Produto());
-
-
             using (var context = new LojaContext())
             {
-                context.Promocoes.Add(promocaoDePascoa);
-                context.SaveChanges();
+                var cliente = context
+                    .Clientes
+                    .Include(c => c.Endereco)
+                    .FirstOrDefault();
 
+                //var produto = context
+                //    .Produtos
+                //    .Include(p => p.Compras)
+                //    .Where(p => p.Id == 9004)
+                //    .FirstOrDefault();
+                var produto = context
+                    .Produtos
+                    .Where(p => p.Id == 9004)
+                    .FirstOrDefault();
+
+                context.Entry(produto)
+                    .Collection(p => p.Compras)
+                    .Query()
+                    .Where(e => e.Preco > 10)
+                    .Load();
+
+                foreach (var item in produto.Compras)
+                {
+                    Console.WriteLine(item);
+                }
+
+            }
+        }
+
+        private static void ExibeProdutosDaPromocao()
+        {
+            using (var context = new LojaContext())
+            {
+                var promocao = context.Promocoes
+                    .Include(p => p.Produtos)
+                    .ThenInclude(pp => pp.Produto)
+                    .FirstOrDefault();
+                foreach (var item in promocao.Produtos)
+                {
+                    Console.WriteLine(item.Produto);
+                }
+            }
+        }
+
+        private static void AdicionaItensEPromocao()
+        {
+            using (var context = new LojaContext())
+            {
+                var promocao = new Promocao();
+                promocao.Descricao = "Queima Total de Janeiro";
+                promocao.DataInicio = DateTime.Now;
+                promocao.DataFim = DateTime.Now.AddMonths(3);
+
+                var produtos = context
+                    .Produtos
+                    .Where(p => p.Categoria == "Bebida")
+                    .ToList();
+
+                foreach (var p in produtos)
+                {
+                    promocao.IncluiProduto(p);
+                }
+
+                contexto.Promocoes.Add(promocao);
+                contexto.SaveChanges();
             }
         }
     }
